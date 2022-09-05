@@ -1,0 +1,9 @@
+PORT = 8081
+DEBUG = True
+HOSTNAME = 'localhost'
+config ={}
+config['MYSQL_DATABASE_USER'] = 'root'
+config['MYSQL_DATABASE_PASSWORD'] = 'Rahul@2000'
+config['MYSQL_DATABASE_PORT'] = 3306
+config['MYSQL_DATABASE_DB'] = 'lms'
+config['MYSQL_DATABASE_HOST'] = 'localhost'
