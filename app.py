@@ -8,6 +8,7 @@ import json
 from bson import json_util
 
 app = Flask(__name__)
+app.secret_key = "helloomniwyse"
 
 
 @app.route("/")
@@ -293,8 +294,9 @@ def register():
             conn.employee_details.insert_one(
                 {'EMP_ID': EMP_ID, 'EMP_FNAME': EMP_FNAME, 'EMP_MNAME': EMP_MNAME, 'EMP_LNAME': EMP_LNAME,
                  'IS_MAN': IS_MAN,
-                 'MAN_ID': MAN_ID, 'EMP_CONTACT_NO': EMP_CONTACT_NO, 'EMP_PASSWORD': EMP_PASSWORD})
+                 'MAN_ID': MAN_ID, 'EMP_CONTACT_NO': EMP_CONTACT_NO, 'EMP_PASSWORD': hash_password})
             return jsonify({'message': 'You are registered successfully'})
+
         except Exception as e:
             print(e)
             return showMessage()
@@ -302,21 +304,18 @@ def register():
 
 @app.route('/login', methods=["GET", "POST"])
 def login():
+    conn = mongo.lms_db
     if request.method == 'POST':
         EMP_ID = request.json['EMP_ID']
         EMP_FNAME = request.json['EMP_FNAME']
         EMP_PASSWORD = request.json['EMP_PASSWORD'].encode('utf-8')
-
-        con, cur = mysql_utility.mysql_connection()
-        cur.execute("SELECT * FROM employee_details WHERE EMP_ID=(%s)", ([EMP_ID]))
-        user = cur.fetchone()
-        cur.close()
-        con.close()
-        if len(user) > 0:
-            if bcrypt.hashpw(EMP_PASSWORD, user["EMP_PASSWORD"].encode('utf-8')) == user["EMP_PASSWORD"].encode(
-                    'utf-8'):
-                session['EMP_ID'] = user['EMP_ID']
-                session['EMP_FNAME'] = user['EMP_FNAME']
+        Emp = conn.employee_details.find_one({'EMP_ID': EMP_ID})
+        if len(Emp) > 0:
+            print(Emp["EMP_PASSWORD"])
+            # print(Emp["EMP_PASSWORD"].encode('utf-8'))
+            if bcrypt.hashpw(EMP_PASSWORD, Emp["EMP_PASSWORD"]) == Emp["EMP_PASSWORD"]:
+                session['EMP_ID'] = Emp['EMP_ID']
+                session['EMP_FNAME'] = Emp['EMP_FNAME']
                 return jsonify({'message': 'You are logged in successfully'})
             else:
                 return "Error password and email not match"
