@@ -315,7 +315,7 @@ def login():
             # print(Emp["EMP_PASSWORD"].encode('utf-8'))
             if bcrypt.hashpw(EMP_PASSWORD, Emp["EMP_PASSWORD"]) == Emp["EMP_PASSWORD"]:
                 session['EMP_ID'] = Emp['EMP_ID']
-                session['EMP_FNAME'] = Emp['EMP_FNAME']
+                session['EMP_FNAME']  = Emp['EMP_FNAME']
                 return jsonify({'message': 'You are logged in successfully'})
             else:
                 return "Error password and email not match"
